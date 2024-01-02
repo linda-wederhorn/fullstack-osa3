@@ -3,9 +3,16 @@ const app = express()
 const morgan = require('morgan')
 let phonebook = require('./phonebook')
 app.use(express.json())
-app.use(morgan('tiny'))
 
-console.log(phonebook)
+app.use(morgan(function (tokens, req, res) {
+  let log = [tokens.method(req, res),
+  tokens.url(req, res),
+  tokens.status(req, res),
+  tokens.res(req, res, 'content-length'), '-',
+  tokens['response-time'](req, res), 'ms '].join(' ')
+
+  return (tokens.method(req, res) != "POST") ? log : log.concat(JSON.stringify(req.body))
+}))
 
 app.get('/info', (_request, response) => {
   response.send('<p>Phonebook has info for ' + phonebook.length + ' people</p>' + new Date())
@@ -26,7 +33,6 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  console.log("DELETE!!!")
   const id = Number(request.params.id)
   if (!phonebook.find(person => person.id === id)) response.status(404).end()
   phonebook = phonebook.filter(person => person.id !== id)
