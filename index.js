@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 let phonebook = require('./phonebook')
 app.use(express.json())
+app.use(morgan('tiny'))
 
 console.log(phonebook)
 
