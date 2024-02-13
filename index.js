@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 let phonebook = require('./phonebook')
 
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(cors())
 
