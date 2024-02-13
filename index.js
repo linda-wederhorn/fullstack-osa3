@@ -61,7 +61,6 @@ app.post('/api/persons', (request, response) => {
       error: 'number already in phonebook'
     })
 
-
   const person = {
     id: Math.floor(Math.random() * 10000000),
     name: body.name,
