@@ -7,10 +7,7 @@ const PORT = process.env.PORT
 const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
-mongoose.connect(url, { useUnifiedTopology: true }, (err) => {
-  if (err) console.warn("\n\nError connecting to MongoDB:\n", err)
-  else console.log("Successfully connected to MongoDB")
-})
+mongoose.connect(url)
 
 const noteSchema = new mongoose.Schema({
   content: String,
