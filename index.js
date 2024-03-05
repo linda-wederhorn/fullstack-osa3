@@ -54,25 +54,25 @@ app.post('/api/persons', (request, response) => {
       error: 'name and/or number missing'
     })
 
-  if (phonebook.find(person => person.name === body.name))
-    return response.status(400).json({
-      error: 'name already in phonebook'
-    })
-
-  if (phonebook.find(person => person.number === body.number))
-    return response.status(400).json({
-      error: 'number already in phonebook'
-    })
-
-  const person = {
-    id: Math.floor(Math.random() * 10000000),
+  const person = new Person({
     name: body.name,
     number: body.number,
-  }
+  })
 
-  phonebook = phonebook.concat(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 
-  response.json(person)
+  // if (phonebook.find(person => person.name === body.name))
+  //   return response.status(400).json({
+  //     error: 'name already in phonebook'
+  //   })
+
+  // if (phonebook.find(person => person.number === body.number))
+  //   return response.status(400).json({
+  //     error: 'number already in phonebook'
+  //   })
+
 })
 
 const PORT = process.env.PORT || 3001
