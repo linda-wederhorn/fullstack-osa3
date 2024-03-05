@@ -15,7 +15,7 @@ app.use(morgan(function (tokens, req, res) {
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms '].join(' ')
 
-  return (tokens.method(req, res) != 'POST') ? log : log.concat(JSON.stringify(req.body))
+  return (tokens.method(req, res) !== 'POST') ? log : log.concat(JSON.stringify(req.body))
 }))
 
 app.get('/info', (_request, response, next) => {
@@ -43,7 +43,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(_result => { response.status(204).end() })
+    .then(() => { response.status(204).end() })
     .catch(error => next(error))
 })
 

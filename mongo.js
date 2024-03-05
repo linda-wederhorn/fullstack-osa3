@@ -1,9 +1,6 @@
 require('dotenv').config()
-const express = require('express')
 const mongoose = require('mongoose')
-const app = express()
 
-const PORT = process.env.PORT
 const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
@@ -16,21 +13,21 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-if (process.argv.length == 4) {
+if (process.argv.length === 4) {
   const person = new Person({
-    "name": process.argv[3],
-    "number": process.argv[4]
+    'name': process.argv[3],
+    'number': process.argv[4]
   })
-  person.save().then(result => {
+  person.save().then(() => {
     console.log(`added ${person.name} number ${person.number} to phonebook`)
     mongoose.connection.close()
-  }).catch(err => console.warn("\n\nError in saving the note:\n", err))
+  }).catch(err => console.warn('\n\nError in saving the note:\n', err))
 }
 
-if (process.argv.length == 2) {
+if (process.argv.length === 2) {
   Person.find({}).then(result => {
-    result.forEach(person => {
-      console.log(person.name, " ", person.number)
+    result.forEach((person) => {
+      console.log(person.name, ' ', person.number)
     })
     mongoose.connection.close()
   })

@@ -3,12 +3,11 @@ require('dotenv').config()
 
 mongoose.set('strictQuery', false)
 
-const PORT = process.env.PORT || 3001
 const url = process.env.MONGODB_URI
 
 console.log('Connecting to', url)
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('Connected to MongoDB')
   })
   .catch((error) => {
@@ -27,8 +26,6 @@ const personSchema = new mongoose.Schema({
     required: true
   }
 })
-
-const Person = mongoose.model('Person', personSchema)
 
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
