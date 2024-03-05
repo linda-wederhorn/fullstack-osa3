@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Person = require('./models/person')
 let phonebook = require('./phonebook')
 
 app.use(express.static('dist'))
@@ -23,7 +24,9 @@ app.get('/info', (_request, response) => {
 })
 
 app.get('/api/persons', (_request, response) => {
-  response.json(phonebook)
+  Person.find({}).then(result => {
+    response.json(result)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
