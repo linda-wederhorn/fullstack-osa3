@@ -6,13 +6,13 @@ mongoose.set('strictQuery', false)
 const PORT = process.env.PORT || 3001
 const url = process.env.MONGODB_URI
 
-console.log('connecting to', url)
+console.log('Connecting to', url)
 mongoose.connect(url)
   .then(result => {
-    console.log(`Connected to MongoDB at ${url}`)
+    console.log(`Connected to MongoDB`)
   })
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error.message)
+    console.error('Error connecting to MongoDB:', error.name, error.message)
   })
 
 const personSchema = new mongoose.Schema({

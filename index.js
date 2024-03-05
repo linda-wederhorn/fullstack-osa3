@@ -19,14 +19,17 @@ app.use(morgan(function (tokens, req, res) {
   return (tokens.method(req, res) != "POST") ? log : log.concat(JSON.stringify(req.body))
 }))
 
-app.get('/info', (_request, response) => {
-  response.send('<p>Phonebook has info for ' + phonebook.length + ' people</p>' + new Date())
+app.get('/info', (_request, response, next) => {
+  Person.find({}).then(result => {
+    response.send('<p>Phonebook has info for ' + result.length + ' people</p>\n' +
+      `<p>` + new Date() + `</p>`)
+  }).catch(error => next(error))
 })
 
-app.get('/api/persons', (_request, response) => {
+app.get('/api/persons', (_request, response, next) => {
   Person.find({}).then(result => {
     response.json(result)
-  })
+  }).catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -36,26 +39,16 @@ app.get('/api/persons/:id', (request, response, next) => {
     } else {
       response.status(404).end()
     }
-  })
-    .catch(error => next(error))
+  }).catch(error => next(error))
 })
-
-// app.delete('/api/persons/:id', (request, response) => {
-//   const id = Number(request.params.id)
-//   if (!phonebook.find(person => person.id === id)) response.status(404).end()
-//   phonebook = phonebook.filter(person => person.id !== id)
-//   response.status(204).end()
-// })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
-      response.status(204).end()
-    })
+    .then(result => { response.status(204).end() })
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number)
@@ -68,35 +61,26 @@ app.post('/api/persons', (request, response) => {
     number: body.number,
   })
 
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
-
-  // if (phonebook.find(person => person.name === body.name))
-  //   return response.status(400).json({
-  //     error: 'name already in phonebook'
-  //   })
-
-  // if (phonebook.find(person => person.number === body.number))
-  //   return response.status(400).json({
-  //     error: 'number already in phonebook'
-  //   })
-
-})
-
-app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
-
-  const person = {
-    name: body.name,
-    number: body.number,
-  }
-
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then(updatedPerson => {
-      response.json(updatedPerson)
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
     })
     .catch(error => next(error))
+
+  app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+
+    const person = {
+      name: body.name,
+      number: body.number,
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+      .then(updatedPerson => {
+        response.json(updatedPerson)
+      })
+      .catch(error => next(error))
+  })
 })
 
 // unknown endpoints
