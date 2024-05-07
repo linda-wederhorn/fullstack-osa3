@@ -10,10 +10,10 @@ app.use(cors())
 
 app.use(morgan(function (tokens, req, res) {
   let log = [tokens.method(req, res),
-  tokens.url(req, res),
-  tokens.status(req, res),
-  tokens.res(req, res, 'content-length'), '-',
-  tokens['response-time'](req, res), 'ms '].join(' ')
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms '].join(' ')
 
   return (tokens.method(req, res) !== 'POST') ? log : log.concat(JSON.stringify(req.body))
 }))
