@@ -10,10 +10,10 @@ app.use(cors())
 
 app.use(morgan(function (tokens, req, res) {
   let log = [tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms '].join(' ')
+  tokens.url(req, res),
+  tokens.status(req, res),
+  tokens.res(req, res, 'content-length'), '-',
+  tokens['response-time'](req, res), 'ms '].join(' ')
 
   return (tokens.method(req, res) !== 'POST') ? log : log.concat(JSON.stringify(req.body))
 }))
@@ -21,7 +21,7 @@ app.use(morgan(function (tokens, req, res) {
 app.get('/info', (_request, response, next) => {
   Person.find({}).then(result => {
     response.send('<p>Phonebook has info for ' + result.length + ' people</p>\n' +
-            '<p>' + new Date() + '</p>')
+      '<p>' + new Date() + '</p>')
   }).catch(error => next(error))
 })
 
@@ -60,32 +60,32 @@ app.post('/api/persons', (request, response, next) => {
       response.json(savedPerson)
     })
     .catch(error => next(error))
+})
 
-  app.put('/api/persons/:id', (request, response, next) => {
-    const { name, number } = request.body
+app.put('/api/persons/:id', (request, response, next) => {
+  const { name, number } = request.body
 
-    const person = new Person({
-      name: name,
-      number: number
+  const person = {
+    name: name,
+    number: number
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person,
+    { new: true, runValidators: true, context: 'document' })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
     })
-
-    Person.findByIdAndUpdate(request.params.id, person,
-      { new: true, runValidators: true, context: 'query' })
-      .then(updatedPerson => {
-        response.json(updatedPerson)
-      })
-      .catch(error => next(error))
-  })
+    .catch(error => next(error))
 })
 
 // unknown endpoints
-const unknownEndpoint = (request, response) => {
+const unknownEndpoint = (_request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
 
 // error handling
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, _request, response, next) => {
   console.error(error.name, error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
